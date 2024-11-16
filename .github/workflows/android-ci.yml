@@ -12,8 +12,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - run: ./gradlew build --no-daemon
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -29,6 +27,8 @@ jobs:
           cache-dependency-path: |
             sub-project/*.gradle*
             sub-project/**/gradle-wrapper.properties
+
+      - run: ./gradlew build --no-daemon
 
       - name: Flutter Version
         run: flutter --version
