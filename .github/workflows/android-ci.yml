@@ -8,65 +8,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Ensure Required Tools Are Installed
-      - name: Install Git
-        run: sudo apt-get update && sudo apt-get install -y git
-
-      # Step 2: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 3: Cache Flutter SDK
-      - name: Cache Flutter SDK
-        id: flutter-cache
-        uses: actions/cache@v3
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          path: $HOME/flutter
-          key: flutter-3.24.0-${{ runner.os }}
-          restore-keys: |
-            flutter-
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: 'true'
 
-      # Step 4: Install Flutter (if not cached)
-      - name: Install Flutter
-        if: steps.flutter-cache.outputs.cache-hit != 'true'
-        run: |
-          git clone https://github.com/flutter/flutter.git -b 3.24.0 $HOME/flutter
-          echo "$HOME/flutter/bin" >> $GITHUB_PATH
-        env:
-          PATH: $HOME/flutter/bin:$PATH
+      - name: Flutter Version
+        run: flutter --version
 
-      # Step 5: Cache Gradle dependencies
-      - name: Cache Gradle Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: gradle-caches-${{ runner.os }}
-          restore-keys: |
-            gradle-caches-
-
-      # Step 6: Setup Flutter environment
-      - name: Flutter Doctor
-        run: flutter doctor
-        env:
-          PATH: $HOME/flutter/bin:$PATH
-
-      # Step 7: Fetch Flutter dependencies
       - name: Flutter Pub Get
         run: flutter pub get
-        env:
-          PATH: $HOME/flutter/bin:$PATH
 
-      # Step 8: Build Android App Bundle
-      - name: Build Android App Bundle
-        run: flutter build appbundle --release
-        env:
-          PATH: $HOME/flutter/bin:$PATH
+      - run: flutter test
 
-      # Step 9: Upload Build Artifact (Optional)
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: android-app-bundle
-          path: build/app/outputs/bundle/release/*.aab
+      - run: flutter build apk
+
+      - run: flutter build appbundle
