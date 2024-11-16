@@ -36,6 +36,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: 'true'
 
 #      # Decode Android env variables
 #      - name: Decode Android keystore
@@ -62,7 +63,6 @@ jobs:
       - name: Build aab
         run: |
           flutter build appbundle 
-          --release
 
       # Upload generated aab to project artifacts
       - name: Upload generated aab to the artifacts
