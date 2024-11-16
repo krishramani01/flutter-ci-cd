@@ -10,11 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
+      # Step 1: Ensure Required Tools Are Installed
+      - name: Install Git
+        run: sudo apt-get update && sudo apt-get install -y git
+
+      # Step 2: Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Cache Flutter SDK
+      # Step 3: Cache Flutter SDK
       - name: Cache Flutter SDK
         id: flutter-cache
         uses: actions/cache@v3
@@ -24,6 +28,7 @@ jobs:
           restore-keys: |
             flutter-
 
+      # Step 4: Install Flutter (if not cached)
       - name: Install Flutter
         if: steps.flutter-cache.outputs.cache-hit != 'true'
         run: |
@@ -32,7 +37,7 @@ jobs:
         env:
           PATH: $HOME/flutter/bin:$PATH
 
-      # Step 3: Cache Gradle dependencies
+      # Step 5: Cache Gradle dependencies
       - name: Cache Gradle Dependencies
         uses: actions/cache@v3
         with:
@@ -41,25 +46,25 @@ jobs:
           restore-keys: |
             gradle-caches-
 
-      # Step 4: Setup Flutter environment
+      # Step 6: Setup Flutter environment
       - name: Flutter Doctor
         run: flutter doctor
         env:
           PATH: $HOME/flutter/bin:$PATH
 
-      # Step 5: Fetch Flutter dependencies
+      # Step 7: Fetch Flutter dependencies
       - name: Flutter Pub Get
         run: flutter pub get
         env:
           PATH: $HOME/flutter/bin:$PATH
 
-      # Step 6: Build Android App Bundle
+      # Step 8: Build Android App Bundle
       - name: Build Android App Bundle
         run: flutter build appbundle --release
         env:
           PATH: $HOME/flutter/bin:$PATH
 
-      # Step 7: Upload Build Artifact (Optional)
+      # Step 9: Upload Build Artifact (Optional)
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
