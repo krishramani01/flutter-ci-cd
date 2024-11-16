@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: aab-stores
-          path: {{ env.AAB_PATH }}
+          path: ${{ env.AAB_PATH }}
 
 #      # Deploy bundle to Google Play internal testing
 #      - name: Deploy to Play Store (Internal testing)
